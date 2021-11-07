@@ -1,0 +1,40 @@
+buildscript {
+    dependencies {
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.7.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'info.solidsoft.pitest' version '1.7.0'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+pitest {
+    targetClasses = ['hse.se.*'] //by default "${project.group}.*"
+    pitestVersion = '1.7.0' //not needed when a default PIT version should be used
+    threads = 4
+    outputFormats = ['HTML']
+    timestampedReports = false
+}
+repositories {
+    mavenCentral()
+    //Needed only for SNAPSHOT versions
+    //maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.15'
+}
+
+test {
+    systemProperty 'spring.test.constructor.autowire.mode', 'all'
+}
+
+pitest {
+    jvmArgs = ['-Dspring.test.constructor.autowire.mode=all']
+}
